@@ -1,0 +1,1780 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Adam Biotech — Real-time quality control for 3D bioprinting. Stop losing $5,000 prints to invisible failures.">
+  <title>Adam Biotech — Stop Losing Prints. Start Saving Lives.</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <style>
+    /* ================================================================
+       CSS CUSTOM PROPERTIES
+    ================================================================ */
+    :root {
+      --bg-primary:         #ffffff;
+      --bg-secondary:       #f8fafc;
+      --bg-card:            #ffffff;
+      --bg-card-hover:      #f1f5f9;
+      --bg-nav:             rgba(255, 255, 255, 0.9);
+
+      --color-accent:       #007AFF;
+      --color-accent-light: #0a84ff;
+      --color-accent-glow:  rgba(0, 122, 255, 0.15);
+      --color-accent-dim:   rgba(0, 122, 255, 0.08);
+
+      --color-danger:       #ef4444;
+      --color-danger-dim:   rgba(239, 68, 68, 0.08);
+      --color-success:      #22c55e;
+      --color-warning:      #f59e0b;
+
+      --text-primary:       #1c1c1e;
+      --text-secondary:     #64748b;
+      --text-muted:         #94a3b8;
+
+      --border-subtle:      rgba(0, 122, 255, 0.12);
+      --border-card:        rgba(0, 122, 255, 0.18);
+
+      --gradient-accent:            linear-gradient(135deg, #007AFF 0%, #0056b3 100%);
+      --gradient-accent-horizontal: linear-gradient(90deg, #007AFF 0%, #0056b3 100%);
+      --gradient-danger:            linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+
+      --shadow-card:        0 4px 24px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+      --shadow-card-hover:  0 8px 40px rgba(0,122,255,0.12), 0 4px 16px rgba(0,0,0,0.06);
+
+      --font-heading:   'Space Grotesk', system-ui, sans-serif;
+      --font-body:      'Plus Jakarta Sans', system-ui, sans-serif;
+
+      --container-max:  1200px;
+      --nav-height:     72px;
+      --section-pad:    clamp(64px, 10vw, 120px);
+      --radius-card:    16px;
+      --radius-sm:      8px;
+      --radius-pill:    100px;
+      --transition:     0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* ================================================================
+       RESET
+    ================================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: var(--nav-height);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-weight: 400;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+    img, svg { display: block; max-width: 100%; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+    button { font-family: inherit; cursor: pointer; border: none; background: none; }
+    input, select, textarea { font-family: inherit; }
+
+    /* ================================================================
+       TYPOGRAPHY
+    ================================================================ */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+    .text-hero    { font-size: clamp(2.5rem, 5.5vw, 4.5rem); font-weight: 800; line-height: 1.06; letter-spacing: -0.03em; }
+    .text-display { font-size: clamp(2rem, 4vw, 3.25rem); font-weight: 700; }
+    .text-h3      { font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 600; }
+    .text-lead    { font-size: clamp(1rem, 1.5vw, 1.175rem); line-height: 1.75; color: var(--text-secondary); }
+
+    .text-accent  { color: var(--color-accent); }
+    .text-danger  { color: var(--color-danger); }
+    .text-gradient { color: var(--color-accent); }
+
+    /* ================================================================
+       LAYOUT
+    ================================================================ */
+    .container {
+      max-width: var(--container-max);
+      margin: 0 auto;
+      padding: 0 clamp(20px, 4vw, 48px);
+    }
+    section {
+      padding: var(--section-pad) 0;
+      position: relative;
+      scroll-margin-top: var(--nav-height);
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.13em;
+      text-transform: uppercase;
+      color: var(--color-accent);
+      background: var(--color-accent-dim);
+      border: 1px solid rgba(0,122,255,0.25);
+      padding: 6px 14px;
+      border-radius: var(--radius-pill);
+      margin-bottom: 20px;
+    }
+    .section-header         { margin-bottom: 60px; }
+    .section-header.centered { text-align: center; }
+    .section-header p       { margin-top: 16px; max-width: 640px; }
+    .section-header.centered p { margin-left: auto; margin-right: auto; }
+
+    .section-divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,122,255,0.2) 50%, transparent);
+      max-width: 200px;
+      margin: 0 auto;
+    }
+
+    /* ================================================================
+       BACKGROUNDS
+    ================================================================ */
+    .dot-grid {
+      background-image: radial-gradient(circle, rgba(0,122,255,0.06) 1px, transparent 1px);
+      background-size: 24px 24px;
+    }
+    .grain {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      opacity: 0.02;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-repeat: repeat;
+      background-size: 200px 200px;
+    }
+
+    /* ================================================================
+       BUTTONS
+    ================================================================ */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.92rem;
+      letter-spacing: -0.01em;
+      padding: 13px 26px;
+      border-radius: var(--radius-pill);
+      transition: var(--transition);
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--gradient-accent);
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(0,122,255,0.25);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 32px rgba(0,122,255,0.35); }
+    .btn-secondary {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border-card);
+    }
+    .btn-secondary:hover { background: rgba(0,122,255,0.06); border-color: var(--color-accent); transform: translateY(-2px); }
+    .btn-lg { padding: 15px 34px; font-size: 1rem; }
+
+    /* ================================================================
+       CARDS
+    ================================================================ */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: var(--radius-card);
+      padding: 32px;
+      transition: var(--transition);
+      box-shadow: var(--shadow-card);
+      position: relative;
+      overflow: hidden;
+    }
+    .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); border-color: rgba(0,122,255,0.25); }
+
+    /* ================================================================
+       SCROLL ANIMATIONS
+    ================================================================ */
+    .animate-in {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.65s cubic-bezier(0.4,0,0.2,1), transform 0.65s cubic-bezier(0.4,0,0.2,1);
+    }
+    .animate-in.visible { opacity: 1; transform: translateY(0); }
+    .animate-in.delay-1 { transition-delay: 0.1s; }
+    .animate-in.delay-2 { transition-delay: 0.2s; }
+    .animate-in.delay-3 { transition-delay: 0.3s; }
+    .animate-in.delay-4 { transition-delay: 0.4s; }
+    .animate-in.delay-5 { transition-delay: 0.5s; }
+
+    /* ================================================================
+       NAVIGATION
+    ================================================================ */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      z-index: 1000;
+      height: var(--nav-height);
+      background: var(--bg-nav);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: var(--transition);
+    }
+    nav.scrolled { background: rgba(255,255,255,0.97); box-shadow: 0 1px 20px rgba(0,0,0,0.06); }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 100%; }
+
+    .nav-logo {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.2rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 2px;
+    }
+    .nav-logo .bio { color: var(--color-accent); }
+
+    .nav-links { display: flex; align-items: center; gap: 34px; }
+    .nav-links a {
+      font-size: 0.875rem; font-weight: 500; color: var(--text-secondary);
+      position: relative; transition: color var(--transition); padding: 4px 0;
+    }
+    .nav-links a::after {
+      content: ''; position: absolute; bottom: -2px; left: 0;
+      width: 0; height: 2px; background: var(--gradient-accent);
+      transition: width var(--transition); border-radius: 2px;
+    }
+    .nav-links a:hover { color: var(--text-primary); }
+    .nav-links a:hover::after { width: 100%; }
+    .nav-cta { display: flex; align-items: center; gap: 12px; }
+
+    /* Hamburger */
+    .hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      cursor: pointer; padding: 4px; z-index: 1010;
+    }
+    .hamburger span { display: block; width: 24px; height: 2px; background: var(--text-primary); border-radius: 2px; transition: var(--transition); }
+    .hamburger.open span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+    .hamburger.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+    /* Mobile menu */
+    .mobile-menu {
+      position: fixed; top: var(--nav-height); left: 0; right: 0;
+      background: rgba(255,255,255,0.98); backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--border-card);
+      padding: 24px; z-index: 999;
+      display: flex; flex-direction: column; gap: 4px;
+      transform: translateY(-110%); opacity: 0; pointer-events: none;
+      transition: var(--transition);
+    }
+    .mobile-menu.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .mobile-menu a { font-size: 1.05rem; font-weight: 500; color: var(--text-secondary); padding: 13px 16px; border-radius: var(--radius-sm); transition: var(--transition); }
+    .mobile-menu a:hover { color: var(--text-primary); background: var(--color-accent-dim); }
+    .mobile-menu .btn { margin-top: 12px; justify-content: center; }
+    .overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.25); z-index: 998;
+      opacity: 0; pointer-events: none; transition: opacity var(--transition);
+    }
+    .overlay.visible { opacity: 1; pointer-events: auto; }
+
+    /* ================================================================
+       HERO
+    ================================================================ */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding-top: calc(var(--nav-height) + 60px); padding-bottom: 80px;
+      position: relative; overflow: hidden;
+    }
+    #hero .dot-grid-bg { position: absolute; inset: 0; z-index: 0; }
+    .glow-orb { position: absolute; z-index: 0; border-radius: 50%; filter: blur(80px); pointer-events: none; }
+    .orb-1 { width: 700px; height: 700px; background: radial-gradient(circle, rgba(0,122,255,0.07) 0%, transparent 70%); top: 5%; left: 50%; transform: translateX(-50%); }
+    .orb-2 { width: 350px; height: 350px; background: radial-gradient(circle, rgba(0,122,255,0.05) 0%, transparent 70%); bottom: 15%; right: 8%; }
+
+    .hero-content { position: relative; z-index: 1; text-align: center; max-width: 900px; margin: 0 auto; }
+
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,122,255,0.08); border: 1px solid rgba(0,122,255,0.25);
+      border-radius: var(--radius-pill); padding: 6px 16px 6px 10px;
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--color-accent-light); margin-bottom: 32px;
+    }
+    .hero-badge .pulse-dot {
+      width: 6px; height: 6px; border-radius: 50%; background: var(--color-accent);
+      animation: pulse-dot 2.2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:0.5; transform:scale(0.75); } }
+
+    #hero h1 { margin-bottom: 24px; }
+    #hero .lead { max-width: 660px; margin: 0 auto 40px; }
+    .hero-cta-group { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-bottom: 60px; }
+
+    .hero-social-proof {
+      display: flex; align-items: center; justify-content: center;
+      gap: 24px; flex-wrap: wrap; padding-top: 28px;
+      border-top: 1px solid var(--border-subtle);
+    }
+    .sp-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+    .sp-items { display: flex; align-items: center; gap: 20px; flex-wrap: wrap; }
+    .sp-item { font-size: 0.82rem; font-weight: 600; color: var(--text-secondary); display: flex; align-items: center; gap: 6px; }
+    .sp-item::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--color-accent); opacity: 0.65; }
+
+    /* Particles */
+    .particle {
+      position: absolute; border-radius: 50%;
+      pointer-events: none; z-index: 0;
+      animation: float-up linear infinite;
+    }
+    @keyframes float-up {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      8%   { opacity: 0.6; transform: translateY(90vh) scale(1); }
+      92%  { opacity: 0.2; }
+      100% { transform: translateY(-40px) scale(0.4); opacity: 0; }
+    }
+
+    /* ================================================================
+       PROBLEM
+    ================================================================ */
+    #problem { background: var(--bg-secondary); }
+    #problem .section-label { color: var(--color-danger); background: var(--color-danger-dim); border-color: rgba(239,68,68,0.3); }
+
+    .stat-cards-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card-danger {
+      background: #fff; border: 1px solid rgba(239,68,68,0.2);
+      border-radius: var(--radius-card); padding: 28px 24px; text-align: center;
+      transition: var(--transition);
+    }
+    .stat-card-danger:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.35); }
+    .stat-card-danger .big-num { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: var(--color-danger); line-height: 1; margin-bottom: 10px; }
+    .stat-card-danger p { color: var(--text-secondary); font-size: 0.85rem; line-height: 1.55; }
+
+    /* Donut chart */
+    .donut-wrapper {
+      display: flex; align-items: center; justify-content: center;
+      gap: 40px; flex-wrap: wrap; padding: 36px 40px;
+      background: #fff; border: 1px solid rgba(0,122,255,0.15);
+      border-radius: var(--radius-card); box-shadow: var(--shadow-card);
+    }
+    .donut-chart-container { position: relative; width: 140px; height: 140px; flex-shrink: 0; }
+    .donut-chart { width: 140px; height: 140px; transform: rotate(-90deg); }
+    .donut-track { fill: none; stroke: rgba(0,122,255,0.1); stroke-width: 22; }
+    .donut-fill {
+      fill: none; stroke: var(--color-danger); stroke-width: 22; stroke-linecap: round;
+      stroke-dasharray: 376.99;
+      stroke-dashoffset: 376.99;
+      transition: stroke-dashoffset 2.2s cubic-bezier(0.4,0,0.2,1);
+      filter: drop-shadow(0 0 10px rgba(239,68,68,0.45));
+    }
+    .donut-fill.animate { stroke-dashoffset: 169.6; } /* 376.99 * (1 - 0.55) */
+    .donut-center {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+    }
+    .donut-center .pct { font-family: var(--font-heading); font-size: 1.9rem; font-weight: 800; color: var(--color-danger); line-height: 1; }
+    .donut-center .pct-label { font-size: 0.65rem; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
+    .donut-info { max-width: 380px; }
+    .donut-info h3 { margin-bottom: 10px; font-size: 1.1rem; }
+    .donut-info p { color: var(--text-secondary); margin-bottom: 12px; font-size: 0.9rem; line-height: 1.6; }
+    .pull-quote {
+      background: rgba(239,68,68,0.06); border-left: 3px solid var(--color-danger);
+      padding: 12px 16px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-style: italic; color: var(--text-secondary); font-size: 0.83rem; line-height: 1.55;
+    }
+    .pull-quote cite { display: block; font-style: normal; font-weight: 600; font-size: 0.78rem; color: var(--text-muted); margin-top: 8px; }
+
+    /* ================================================================
+       SOLUTION
+    ================================================================ */
+    #solution { background: var(--bg-primary); }
+
+    .feature-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; }
+    .feature-card {
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      border-radius: var(--radius-card); padding: 32px;
+      transition: var(--transition); position: relative; overflow: hidden;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
+    .feature-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient-accent-horizontal); }
+    .feature-icon { width: 52px; height: 52px; border-radius: 14px; background: var(--color-accent-dim); display: flex; align-items: center; justify-content: center; margin-bottom: 16px; font-size: 1.4rem; }
+    .feature-card h3 { margin-bottom: 10px; font-size: 1.15rem; }
+    .feature-card p { color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem; line-height: 1.65; }
+    .sensor-list { display: flex; flex-direction: column; gap: 10px; }
+    .sensor-item { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; color: var(--text-secondary); }
+    .sensor-check { width: 20px; height: 20px; border-radius: 50%; background: var(--color-accent-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.7rem; color: var(--color-accent); font-weight: 700; }
+
+    .differentiator-box {
+      border-radius: var(--radius-card); padding: 40px;
+      background: linear-gradient(135deg, rgba(0,122,255,0.04) 0%, rgba(0,86,179,0.03) 100%);
+      position: relative;
+    }
+    .differentiator-box::before {
+      content: ''; position: absolute; inset: 0; border-radius: var(--radius-card); padding: 1px;
+      background: linear-gradient(135deg, #007AFF, #0056b3);
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor; mask-composite: exclude; pointer-events: none;
+    }
+    .diff-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 32px; margin-top: 28px; }
+    .diff-item { text-align: center; }
+    .diff-item .num { font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; color: var(--color-accent); line-height: 1; margin-bottom: 8px; }
+    .diff-item p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; }
+
+    /* ================================================================
+       HOW IT WORKS
+    ================================================================ */
+    #how-it-works { background: var(--bg-secondary); }
+
+    .steps-flow { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; position: relative; }
+    .steps-flow::before {
+      content: ''; position: absolute; top: 36px; left: 12.5%; right: 12.5%; height: 1px;
+      background: linear-gradient(90deg, #007AFF 0%, #0056b3 100%); opacity: 0.3;
+    }
+    .step { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 20px; }
+    .step-icon-wrap { position: relative; margin-bottom: 24px; }
+    .step-icon-circle {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: var(--bg-card); border: 2px solid var(--border-card);
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 1; transition: var(--transition);
+      box-shadow: var(--shadow-card);
+    }
+    .step:hover .step-icon-circle { border-color: var(--color-accent); box-shadow: 0 0 24px rgba(0,122,255,0.2); }
+    .step-num {
+      position: absolute; top: -6px; right: -6px;
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--gradient-accent);
+      font-family: var(--font-heading); font-size: 0.72rem; font-weight: 700; color: #fff;
+      display: flex; align-items: center; justify-content: center; z-index: 2;
+    }
+    .step h3 { margin-bottom: 8px; font-size: 1.05rem; }
+    .step p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ================================================================
+       COMPETITIVE TABLE
+    ================================================================ */
+    #competitive { background: var(--bg-primary); }
+
+    .table-wrapper {
+      position: relative; overflow-x: auto;
+      border-radius: var(--radius-card); border: 1px solid var(--border-card);
+      box-shadow: var(--shadow-card);
+    }
+    .comp-table { width: 100%; min-width: 700px; border-collapse: collapse; background: var(--bg-card); }
+    .comp-table thead tr { background: var(--bg-secondary); }
+    .comp-table th {
+      padding: 14px 20px; font-family: var(--font-heading); font-weight: 600;
+      font-size: 0.8rem; letter-spacing: 0.02em; color: var(--text-secondary);
+      text-align: left; border-bottom: 1px solid var(--border-card);
+      white-space: nowrap;
+    }
+    .comp-table th:first-child { position: sticky; left: 0; background: var(--bg-secondary); z-index: 5; }
+    .comp-table th.lp-col { color: var(--color-accent); border-left: 3px solid var(--color-accent); }
+    .comp-table td {
+      padding: 12px 20px; font-size: 0.85rem; color: var(--text-secondary);
+      border-bottom: 1px solid rgba(0,122,255,0.07);
+    }
+    .comp-table td:first-child { position: sticky; left: 0; background: var(--bg-card); z-index: 1; font-weight: 500; color: var(--text-primary); }
+    .comp-table tr:nth-child(even) td { background: rgba(248,250,252,0.8); }
+    .comp-table tr:nth-child(even) td:first-child { background: rgba(248,250,252,0.8); }
+    .comp-table td.lp-col { border-left: 3px solid var(--color-accent); color: var(--text-primary); font-weight: 500; }
+    .comp-table tr:hover td { background: rgba(0,122,255,0.03); }
+    .ci { color: var(--color-success); font-size: 1.1rem; }
+    .xi { color: var(--color-danger); font-size: 1.1rem; opacity: 0.7; }
+    .pi { color: var(--color-warning); font-size: 1.1rem; }
+
+    /* ================================================================
+       MARKET / IMPACT
+    ================================================================ */
+    #market { background: var(--bg-secondary); }
+
+    .market-stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 16px; margin-bottom: 40px; }
+    .market-card {
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      border-radius: var(--radius-card); padding: 28px 20px; text-align: center;
+      transition: var(--transition); box-shadow: var(--shadow-card);
+    }
+    .market-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
+    .market-icon { font-size: 1.6rem; margin-bottom: 12px; display: block; }
+    .market-num {
+      font-family: var(--font-heading); font-size: 2.4rem; font-weight: 800;
+      color: var(--color-accent); line-height: 1; margin-bottom: 10px; letter-spacing: -0.03em;
+    }
+    .market-num.danger { color: var(--color-danger); }
+    .market-suffix { font-size: 1.5rem; font-weight: 700; }
+    .market-label { font-size: 0.78rem; color: var(--text-secondary); font-weight: 500; line-height: 1.5; }
+
+    .tam-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; }
+    .tam-card {
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      border-radius: var(--radius-card); padding: 28px 24px;
+      transition: var(--transition); position: relative; overflow: hidden;
+    }
+    .tam-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--gradient-accent-horizontal); }
+    .tam-card:hover { box-shadow: var(--shadow-card-hover); transform: translateY(-3px); }
+    .tam-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 10px; }
+    .tam-value { font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--color-accent); margin-bottom: 8px; letter-spacing: -0.02em; }
+    .tam-desc { font-size: 0.84rem; color: var(--text-secondary); line-height: 1.55; }
+
+    /* ================================================================
+       SOCIAL PROOF / QUOTES
+    ================================================================ */
+    #social-proof { background: var(--bg-primary); }
+
+    .interview-banner {
+      display: flex; align-items: center; gap: 24px; justify-content: center;
+      flex-wrap: wrap; background: linear-gradient(135deg, rgba(0,122,255,0.06), rgba(0,86,179,0.04));
+      border: 1px solid rgba(0,122,255,0.2); border-radius: var(--radius-card);
+      padding: 24px 32px; margin-bottom: 40px;
+    }
+    .interview-stat { text-align: center; }
+    .interview-stat .num { font-family: var(--font-heading); font-size: 2rem; font-weight: 800; color: var(--color-accent); line-height: 1; }
+    .interview-stat .lbl { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; }
+    .interview-divider { width: 1px; height: 48px; background: rgba(0,122,255,0.2); }
+
+    .quotes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 40px; }
+    .quote-card {
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      border-left: 4px solid var(--color-accent);
+      border-radius: 0 var(--radius-card) var(--radius-card) 0;
+      padding: 24px 26px; transition: var(--transition);
+    }
+    .quote-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
+    .quote-mark { font-family: Georgia, serif; font-size: 3.5rem; line-height: 0.75; color: var(--color-accent); opacity: 0.22; margin-bottom: 10px; display: block; }
+    .quote-text { font-size: 0.9rem; line-height: 1.65; color: var(--text-secondary); font-style: italic; margin-bottom: 16px; }
+    .quote-author { display: flex; align-items: center; gap: 12px; }
+    .author-avatar { width: 44px; height: 44px; border-radius: 50%; background: var(--gradient-accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 0.8rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+    .author-name { font-weight: 600; font-size: 0.9rem; }
+    .author-title { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* Advisors */
+    .advisors-label { font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); text-align: center; margin-bottom: 20px; }
+    .advisors-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; }
+    .advisor-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-card); padding: 24px 16px; text-align: center; transition: var(--transition); }
+    .advisor-card:hover { border-color: var(--border-card); transform: translateY(-2px); box-shadow: var(--shadow-card); }
+    .advisor-initial { width: 48px; height: 48px; border-radius: 50%; background: var(--color-accent-dim); border: 2px solid rgba(0,122,255,0.25); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-weight: 700; font-size: 0.9rem; color: var(--color-accent); margin: 0 auto 12px; }
+    .advisor-name { font-weight: 600; font-size: 0.85rem; margin-bottom: 4px; }
+    .advisor-affil { font-size: 0.76rem; color: var(--text-muted); line-height: 1.5; }
+
+    /* ================================================================
+       TEAM
+    ================================================================ */
+    #team { background: var(--bg-secondary); }
+
+    .team-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 16px; }
+    .team-card {
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      border-radius: var(--radius-card); padding: 24px 18px;
+      transition: var(--transition);
+    }
+    .team-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-card-hover); }
+    .team-avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--gradient-accent); display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 1rem; font-weight: 700; color: #fff; margin-bottom: 14px; }
+    .team-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 4px; }
+    .team-role { font-size: 0.73rem; color: var(--color-accent); font-weight: 600; margin-bottom: 12px; line-height: 1.3; text-transform: uppercase; letter-spacing: 0.04em; }
+    .team-bio { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; margin-bottom: 12px; }
+    .team-skills { font-size: 0.74rem; color: var(--text-muted); line-height: 1.55; border-top: 1px solid var(--border-subtle); padding-top: 10px; }
+
+    /* ================================================================
+       PRICING
+    ================================================================ */
+    #pricing { background: var(--bg-primary); }
+
+    .pricing-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
+    .pricing-card {
+      background: var(--bg-card); border: 1px solid var(--border-card);
+      border-radius: var(--radius-card); padding: 32px;
+      transition: var(--transition); position: relative; overflow: hidden;
+    }
+    .pricing-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-card-hover); }
+    .pricing-card.featured { border-color: var(--color-accent); box-shadow: 0 0 0 1px var(--color-accent), var(--shadow-card); }
+    .pricing-badge { position: absolute; top: 16px; right: 16px; background: var(--gradient-accent); color: #fff; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 10px; border-radius: var(--radius-pill); }
+    .pricing-label { font-size: 0.74rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+    .pricing-name { font-family: var(--font-heading); font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; }
+    .pricing-price { font-family: var(--font-heading); font-size: 2.5rem; font-weight: 800; color: var(--color-accent); line-height: 1; margin: 16px 0 6px; letter-spacing: -0.03em; }
+    .pricing-price .period { font-size: 0.9rem; font-weight: 500; color: var(--text-muted); }
+    .pricing-sub { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.5; }
+    .pricing-features { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px; }
+    .pricing-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 0.85rem; color: var(--text-secondary); }
+    .pricing-feature .pf-icon { color: var(--color-success); font-size: 0.9rem; flex-shrink: 0; margin-top: 2px; }
+    .pricing-roi { background: rgba(34,197,94,0.08); border: 1px solid rgba(34,197,94,0.25); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 0.82rem; color: var(--text-secondary); line-height: 1.55; }
+    .pricing-roi strong { color: var(--color-success); }
+
+    /* ================================================================
+       BOOK DEMO / CTA
+    ================================================================ */
+    #book-demo { background: var(--bg-secondary); }
+
+    .demo-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+    .demo-left h2 { margin-bottom: 16px; }
+    .demo-left .lead { margin-bottom: 32px; }
+    .demo-trust-items { display: flex; flex-direction: column; gap: 14px; margin-bottom: 32px; }
+    .demo-trust-item { display: flex; align-items: flex-start; gap: 14px; }
+    .demo-trust-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--color-accent-dim); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem; }
+    .demo-trust-text strong { display: block; font-size: 0.9rem; margin-bottom: 2px; }
+    .demo-trust-text span { font-size: 0.82rem; color: var(--text-secondary); }
+
+    .demo-form { background: #fff; border: 1px solid rgba(0,122,255,0.15); border-radius: var(--radius-card); padding: 40px; box-shadow: var(--shadow-card); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 8px; }
+    .form-control {
+      width: 100%; padding: 12px 16px; background: #fff;
+      border: 1px solid rgba(0,0,0,0.1); border-radius: var(--radius-sm);
+      color: var(--text-primary); font-size: 0.92rem; transition: var(--transition); outline: none;
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-control::placeholder { color: var(--text-muted); }
+    .form-control:focus { border-color: var(--color-accent); box-shadow: 0 0 0 3px rgba(0,122,255,0.12); }
+    .form-control.error { border-color: var(--color-danger); box-shadow: 0 0 0 3px rgba(239,68,68,0.1); }
+    .form-error { font-size: 0.74rem; color: var(--color-danger); margin-top: 5px; display: none; }
+    .form-error.visible { display: block; }
+    select.form-control {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; cursor: pointer;
+    }
+    .form-submit { width: 100%; margin-top: 8px; justify-content: center; font-size: 1rem; padding: 15px; }
+    .form-disclaimer { font-size: 0.76rem; color: var(--text-muted); text-align: center; margin-top: 12px; }
+    .form-success { display: none; text-align: center; padding: 52px 20px; }
+    .form-success.visible { display: block; }
+    .success-icon { width: 72px; height: 72px; border-radius: 50%; background: rgba(34,197,94,0.12); border: 2px solid rgba(34,197,94,0.35); display: flex; align-items: center; justify-content: center; margin: 0 auto 22px; font-size: 2rem; }
+    .form-success h3 { margin-bottom: 12px; }
+    .form-success p { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.65; }
+
+    /* ================================================================
+       FOOTER
+    ================================================================ */
+    footer { background: #f1f5f9; border-top: 1px solid var(--border-subtle); padding: 56px 0 32px; }
+    .footer-inner { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 48px; margin-bottom: 44px; }
+    .footer-brand p { color: var(--text-muted); font-size: 0.87rem; margin-top: 12px; max-width: 300px; line-height: 1.7; }
+    .footer-col h4 { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 16px; }
+    .footer-col ul { display: flex; flex-direction: column; gap: 10px; }
+    .footer-col ul a { font-size: 0.88rem; color: var(--text-secondary); transition: color var(--transition); }
+    .footer-col ul a:hover { color: var(--color-accent); }
+    .footer-bottom { display: flex; align-items: center; justify-content: space-between; padding-top: 24px; border-top: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 12px; }
+    .footer-bottom p { font-size: 0.78rem; color: var(--text-muted); }
+    .uw-badge { display: flex; align-items: center; gap: 6px; font-size: 0.76rem; color: var(--text-muted); }
+    .uw-badge strong { color: var(--color-accent); }
+
+    /* ================================================================
+       RESPONSIVE
+    ================================================================ */
+    @media (max-width: 1200px) {
+      .team-grid { grid-template-columns: repeat(3,1fr); }
+      .advisors-grid { grid-template-columns: repeat(3,1fr); }
+    }
+
+    @media (max-width: 1024px) {
+      .market-stats-grid { grid-template-columns: repeat(2,1fr); }
+      .tam-grid { grid-template-columns: 1fr 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
+      .demo-layout { grid-template-columns: 1fr; gap: 40px; }
+      .team-grid { grid-template-columns: repeat(2,1fr); }
+      .advisors-grid { grid-template-columns: repeat(2,1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-cta .btn-secondary { display: none; }
+      .hamburger { display: flex; }
+
+      .stat-cards-grid { grid-template-columns: 1fr; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .steps-flow { grid-template-columns: repeat(2,1fr); gap: 36px; }
+      .steps-flow::before { display: none; }
+      .diff-grid { grid-template-columns: 1fr; gap: 24px; }
+      .quotes-grid { grid-template-columns: 1fr; }
+      .tam-grid { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+      .donut-wrapper { padding: 28px 20px; gap: 28px; flex-direction: column; text-align: center; }
+      .team-grid { grid-template-columns: 1fr; }
+      .interview-divider { display: none; }
+    }
+
+    @media (max-width: 480px) {
+      .steps-flow { grid-template-columns: 1fr; }
+      .market-stats-grid { grid-template-columns: 1fr 1fr; }
+      .hero-cta-group .btn { font-size: 0.88rem; padding: 12px 20px; }
+      .demo-form { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Grain overlay -->
+  <div class="grain" aria-hidden="true"></div>
+
+  <!-- Overlay for mobile nav -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ================================================================
+       NAVIGATION
+  ================================================================ -->
+  <nav id="navbar">
+    <div class="container nav-inner">
+      <a href="#hero" class="nav-logo">ADAM<span class="bio">BIO</span></a>
+
+      <ul class="nav-links" role="list">
+        <li><a href="#problem">Problem</a></li>
+        <li><a href="#solution">Solution</a></li>
+        <li><a href="#competitive">Why Us</a></li>
+        <li><a href="#market">Market</a></li>
+        <li><a href="#social-proof">Validation</a></li>
+        <li><a href="#team">Team</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+      </ul>
+
+      <div class="nav-cta">
+        <a href="#solution" class="btn btn-secondary">Learn More</a>
+        <a href="#book-demo" class="btn btn-primary">Book a Demo</a>
+      </div>
+
+      <button class="hamburger" id="hamburger" aria-label="Toggle navigation" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile menu -->
+  <div class="mobile-menu" id="mobileMenu" role="dialog" aria-label="Navigation">
+    <a href="#problem"      class="mnl">Problem</a>
+    <a href="#solution"     class="mnl">Solution</a>
+    <a href="#how-it-works" class="mnl">How It Works</a>
+    <a href="#competitive"  class="mnl">Why Us</a>
+    <a href="#market"       class="mnl">Market</a>
+    <a href="#social-proof" class="mnl">Validation</a>
+    <a href="#team"         class="mnl">Team</a>
+    <a href="#pricing"      class="mnl">Pricing</a>
+    <a href="#book-demo"    class="mnl">Contact</a>
+    <a href="#book-demo" class="btn btn-primary">Book a Demo &rarr;</a>
+  </div>
+
+  <!-- ================================================================
+       HERO
+  ================================================================ -->
+  <section id="hero">
+    <div class="dot-grid-bg dot-grid"></div>
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <div class="container">
+      <div class="hero-content animate-in">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          Real-Time Bioprint Quality Control
+        </div>
+
+        <h1 class="text-hero">
+          Over <span class="text-danger">50%</span> of bioprints fail.<br>
+          Each one costs <span class="text-danger">$5,000</span>.<br>
+          <span class="text-gradient">We fix that.</span>
+        </h1>
+
+        <p class="text-lead lead">
+          Adam Biotech makes a smart toolhead attachment that monitors temperature, pH, cell concentration, and extrusion force in real time — catching failures as they happen, not after thousands of dollars are already gone.
+        </p>
+
+        <div class="hero-cta-group">
+          <a href="#book-demo" class="btn btn-primary btn-lg">Book a Demo &rarr;</a>
+          <a href="#solution"  class="btn btn-secondary btn-lg">See How It Works</a>
+        </div>
+
+        <div class="hero-social-proof">
+          <span class="sp-label">Validated by</span>
+          <div class="sp-items">
+            <span class="sp-item">UW Bioengineering</span>
+            <span class="sp-item">UW CoMotion Labs</span>
+            <span class="sp-item">NSF I-Corps</span>
+            <span class="sp-item">50+ Customer Interviews</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       THE PROBLEM
+  ================================================================ -->
+  <section id="problem">
+    <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-label" style="color:var(--color-danger);background:var(--color-danger-dim);border-color:rgba(239,68,68,0.3);">The Problem</span>
+        <h2 class="text-display">Bioprinting is flying blind.</h2>
+        <p class="text-lead">It takes over a decade and $2.6 billion to bring a single drug to market — and 90% still fail in clinical trials. Bioprinting was supposed to fix this. Instead, it's a black box that silently destroys experiments.</p>
+      </div>
+
+      <div class="stat-cards-grid">
+        <div class="stat-card-danger animate-in delay-1">
+          <div class="big-num">&gt;50%</div>
+          <p>of bioprinting experiments fail due to undetected fluctuations in temperature, pH, and bioink consistency — discovered only after the damage is done.</p>
+        </div>
+        <div class="stat-card-danger animate-in delay-2">
+          <div class="big-num">$5,000</div>
+          <p>average cost per failed print in human cells, labor, and wasted time. At bi-weekly failure rates, labs lose over $130K per year per printer.</p>
+        </div>
+        <div class="stat-card-danger animate-in delay-3">
+          <div class="big-num">80%</div>
+          <p>of all waste generated in 3D bioprinting contexts is directly attributable to print failures — a systemic, preventable drain on research resources.</p>
+        </div>
+      </div>
+
+      <div class="donut-wrapper animate-in">
+        <div class="donut-chart-container">
+          <svg class="donut-chart" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <circle class="donut-track" cx="80" cy="80" r="60"/>
+            <circle class="donut-fill" id="donutFill" cx="80" cy="80" r="60"/>
+          </svg>
+          <div class="donut-center">
+            <span class="pct">&gt;50%</span>
+            <span class="pct-label">fail rate</span>
+          </div>
+        </div>
+        <div class="donut-info">
+          <h3 class="text-h3">Every other print ends in failure. Researchers have just learned to accept it.</h3>
+          <p>Current bioprinters have no way to monitor the cellular environment at the point of extrusion. Without real-time data, print failures are invisible until the cells are already dead — and the experiment is already over.</p>
+          <div class="pull-quote">
+            "We use a lot of tricks to try and get the bioprinter to simulate ideal conditions... we haven't found a concrete method to reduce print failure and have had to accept that."
+            <cite>— Susana Bohorquez, BioE PhD</cite>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:32px;background:#fff;border:1px solid rgba(239,68,68,0.15);border-radius:var(--radius-card);padding:28px 32px;" class="animate-in">
+        <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.7;max-width:800px;margin:0 auto;text-align:center;">
+          <strong style="color:var(--text-primary);">The bigger picture:</strong> Each failed print isn't just lost materials. It's delayed treatments for the <strong style="color:var(--text-primary);">tens of millions of Americans</strong> living with diseases that lack effective therapies — Alzheimer's, rare diseases, Parkinson's, heart failure. Bioprinting was meant to accelerate drug discovery. Right now, it's a bottleneck.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       SOLUTION
+  ================================================================ -->
+  <section id="solution">
+    <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-label">The Solution</span>
+        <h2 class="text-display">Introducing <span class="text-gradient">Adam Biotech</span></h2>
+        <p class="text-lead">A smart toolhead attachment that puts a quality control layer inside the bioprinter itself. Real-time monitoring. Automatic failure alerts. FDA-ready documentation. Works with your existing printer.</p>
+      </div>
+
+      <div class="feature-grid">
+        <div class="feature-card animate-in delay-1">
+          <div class="feature-icon">🌡️</div>
+          <h3 class="text-h3">Real-Time Sensor Monitoring</h3>
+          <p>Our toolhead attachment embeds sensors directly at the point of extrusion — the only place where print quality is actually determined. No more guessing from downstream observations.</p>
+          <div class="sensor-list">
+            <div class="sensor-item"><span class="sensor-check">✓</span> Temperature monitoring at extrusion tip</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> pH tracking for cell viability</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Cell concentration measurement</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Extrusion force feedback</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Clog and pressure drop detection</div>
+          </div>
+        </div>
+
+        <div class="feature-card animate-in delay-2">
+          <div class="feature-icon">📊</div>
+          <h3 class="text-h3">Live Dashboard + Instant Alerts</h3>
+          <p>Every sensor reading streams to a live monitoring dashboard. When parameters drift outside safe ranges, researchers are notified immediately — before a failed print becomes an irreversible loss.</p>
+          <div class="sensor-list">
+            <div class="sensor-item"><span class="sensor-check">✓</span> Real-time parameter visualization</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Automatic failure detection alerts</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> SMS / email / dashboard notifications</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Full print history and audit trail</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> FDA-ready documentation export</div>
+          </div>
+        </div>
+
+        <div class="feature-card animate-in delay-3">
+          <div class="feature-icon">🤖</div>
+          <h3 class="text-h3">Machine Learning Failure Prediction</h3>
+          <p>By collecting labeled sensor data across every print, we train a proprietary ML model that predicts failures before they happen. The more labs use it, the smarter it gets.</p>
+          <div class="sensor-list">
+            <div class="sensor-item"><span class="sensor-check">✓</span> Multi-parameter failure prediction</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Learns from every print across all customers</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Proprietary dataset no competitor can replicate</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Continuous model improvement over time</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Validated material profiles library</div>
+          </div>
+        </div>
+
+        <div class="feature-card animate-in delay-4">
+          <div class="feature-icon">📋</div>
+          <h3 class="text-h3">FDA Compliance Documentation</h3>
+          <p>The FDA Modernization Act 2.0 (2022) opened the door to non-animal testing in drug approval — and real-time monitoring is expected to become required. We generate that documentation automatically.</p>
+          <div class="sensor-list">
+            <div class="sensor-item"><span class="sensor-check">✓</span> Automatic sensor range validation per cell type</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Regulatory-grade print reports</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Tissue model fidelity certification</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Audit-ready data export</div>
+            <div class="sensor-item"><span class="sensor-check">✓</span> Supports IND and NDA submissions</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="differentiator-box animate-in">
+        <h3 class="text-h3" style="text-align:center;margin-bottom:0;">Why Adam Biotech Works</h3>
+        <div class="diff-grid">
+          <div class="diff-item">
+            <div class="num">$0</div>
+            <p>New printer required. Our attachment works with any extrusion-based bioprinter you already own.</p>
+          </div>
+          <div class="diff-item">
+            <div class="num">100%</div>
+            <p>Of interviewees confirmed no commercial solution exists for real-time bioprint quality control.</p>
+          </div>
+          <div class="diff-item">
+            <div class="num">&lt;3 mo</div>
+            <p>Payback period. One prevented print failure at $5,000 covers the first year's cost within three months.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       HOW IT WORKS
+  ================================================================ -->
+  <section id="how-it-works">
+    <div class="container">
+      <div class="section-header centered animate-in">
+        <span class="section-label">Process</span>
+        <h2 class="text-display">How It Works</h2>
+        <p class="text-lead">From installation to insight, Adam Biotech integrates seamlessly into your existing bioprinting workflow — no new equipment, no protocol changes.</p>
+      </div>
+
+      <div class="steps-flow">
+        <div class="step animate-in delay-1">
+          <div class="step-icon-wrap">
+            <div class="step-icon-circle">
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8 22V14M15 22V8M22 22V17" stroke="#007AFF" stroke-width="2" stroke-linecap="round"/>
+                <path d="M5 25h20" stroke="#007AFF" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="step-num">1</span>
+          </div>
+          <h3>Attach</h3>
+          <p>Mount the sensor module to your existing toolhead. Plug-and-play installation takes under 30 minutes. No printer modifications required.</p>
+        </div>
+
+        <div class="step animate-in delay-2">
+          <div class="step-icon-wrap">
+            <div class="step-icon-circle">
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="15" cy="15" r="9" stroke="#007AFF" stroke-width="1.5"/>
+                <circle cx="15" cy="15" r="3" fill="#007AFF" opacity="0.6"/>
+                <path d="M15 5v2M15 23v2M5 15h2M23 15h2" stroke="#007AFF" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="step-num">2</span>
+          </div>
+          <h3>Monitor</h3>
+          <p>Temperature, pH, cell concentration, and extrusion force are measured in real time at the point of extrusion throughout the entire print.</p>
+        </div>
+
+        <div class="step animate-in delay-3">
+          <div class="step-icon-wrap">
+            <div class="step-icon-circle">
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M6 15l4 4 8-9" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M14 7l4 4-4 4" stroke="#007AFF" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"/>
+                <circle cx="23" cy="8" r="4" stroke="#007AFF" stroke-width="1.5"/>
+                <path d="M21 8h4M23 6v4" stroke="#007AFF" stroke-width="1.25" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="step-num">3</span>
+          </div>
+          <h3>Detect</h3>
+          <p>Our ML model identifies failure signatures as they emerge. Anomalies trigger instant alerts before cells die — saving constructs that took weeks to grow.</p>
+        </div>
+
+        <div class="step animate-in delay-4">
+          <div class="step-icon-wrap">
+            <div class="step-icon-circle">
+              <svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="6" y="5" width="18" height="20" rx="2.5" stroke="#007AFF" stroke-width="1.5"/>
+                <path d="M10 11h10M10 15h7M10 19h5" stroke="#007AFF" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="step-num">4</span>
+          </div>
+          <h3>Document</h3>
+          <p>Every print generates a complete, FDA-ready report validating that your tissue model met the required parameter ranges. Export directly to your regulatory submissions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       COMPETITIVE ADVANTAGE
+  ================================================================ -->
+  <section id="competitive">
+    <div class="container">
+      <div class="section-header animate-in">
+        <span class="section-label">Competitive Advantage</span>
+        <h2 class="text-display">No one else does this.</h2>
+        <p class="text-lead">We benchmarked every commercial bioprinter and parallel research effort. The only real-time monitoring work happening is in single academic labs building internal tools that can't be purchased and only capture what a camera can see.</p>
+      </div>
+
+      <div class="table-wrapper animate-in">
+        <table class="comp-table" aria-label="Competitive comparison">
+          <thead>
+            <tr>
+              <th scope="col">Capability</th>
+              <th scope="col" class="lp-col">Adam Biotech &#9733;</th>
+              <th scope="col">Cellink BioX</th>
+              <th scope="col">Allevi Series</th>
+              <th scope="col">Custom / DIY</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Real-Time Failure Detection</td>
+              <td class="lp-col"><span class="ci">&#10003;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>pH Monitoring at Extrusion</td>
+              <td class="lp-col"><span class="ci">&#10003;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>Cell Concentration Tracking</td>
+              <td class="lp-col"><span class="ci">&#10003;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>Extrusion Force Feedback</td>
+              <td class="lp-col"><span class="ci">&#10003;</span></td>
+              <td><span class="pi">&#126;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>ML Failure Prediction</td>
+              <td class="lp-col"><span class="ci">&#10003;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>FDA Documentation Auto-Generation</td>
+              <td class="lp-col"><span class="ci">&#10003;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+            </tr>
+            <tr>
+              <td>Works With Existing Printers</td>
+              <td class="lp-col"><span class="ci">&#10003;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="xi">&#10007;</span></td>
+              <td><span class="pi">&#126;</span></td>
+            </tr>
+            <tr>
+              <td>Entry Price (per lab)</td>
+              <td class="lp-col" style="color:var(--color-accent);font-weight:600;">$1,500 hardware</td>
+              <td>$80K&ndash;$120K</td>
+              <td>$30K&ndash;$60K</td>
+              <td>$10K&ndash;$50K+</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top:24px;padding:24px 28px;background:rgba(0,122,255,0.04);border:1px solid rgba(0,122,255,0.15);border-radius:var(--radius-card);" class="animate-in">
+        <p style="font-size:0.88rem;color:var(--text-secondary);line-height:1.7;text-align:center;max-width:760px;margin:0 auto;">
+          <strong style="color:var(--text-primary);">The only parallel work:</strong> The Gartner Lab at UCSF/CZ Biohub is building a camera-vision detection tool internally. It is not a product, does not ship, and cannot detect pressure drops, thermal drift, or nozzle clogging — only what a camera can see. We embed multi-sensor hardware directly where extrusion happens.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       MARKET OPPORTUNITY
+  ================================================================ -->
+  <section id="market">
+    <div class="container">
+      <div class="section-header centered animate-in">
+        <span class="section-label">Market Opportunity</span>
+        <h2 class="text-display">A $30.6B market with a clear entry point.</h2>
+        <p class="text-lead">Regulatory tailwinds from FDA Modernization Act 2.0 are accelerating bioprinting adoption. Real-time monitoring is expected to become a requirement — we're already there.</p>
+      </div>
+
+      <div class="market-stats-grid">
+        <div class="market-card animate-in delay-1">
+          <span class="market-icon">💊</span>
+          <div class="market-num danger">
+            $2.6<span class="market-suffix">B</span>
+          </div>
+          <div class="market-label">Average cost to bring a single drug to market over 10+ years</div>
+        </div>
+        <div class="market-card animate-in delay-2">
+          <span class="market-icon">📉</span>
+          <div class="market-num danger">
+            90<span class="market-suffix">%</span>
+          </div>
+          <div class="market-label">Clinical trial failure rate after years of expensive preclinical testing</div>
+        </div>
+        <div class="market-card animate-in delay-3">
+          <span class="market-icon">🔬</span>
+          <div class="market-num">
+            50<span class="market-suffix">+</span>
+          </div>
+          <div class="market-label">Customer interviews conducted — 100% found no commercial solution</div>
+        </div>
+        <div class="market-card animate-in delay-4">
+          <span class="market-icon">💰</span>
+          <div class="market-num">
+            $8<span class="market-suffix">K</span>
+          </div>
+          <div class="market-label">ARR per customer from hardware replacement + software subscription</div>
+        </div>
+      </div>
+
+      <div class="tam-grid animate-in">
+        <div class="tam-card">
+          <div class="tam-label">TAM &mdash; Total Addressable Market</div>
+          <div class="tam-value">$30.6B</div>
+          <div class="tam-desc">Drug Discovery Technologies Market — the full scope of conventional and bioprinting-based drug evaluation methods globally.</div>
+        </div>
+        <div class="tam-card">
+          <div class="tam-label">SAM &mdash; Serviceable Addressable Market</div>
+          <div class="tam-value">$1.31B</div>
+          <div class="tam-desc">Extrusion-based bioprinters (41% of the $3.55B market) used by pharma, biotech, academic labs, and CROs — our direct target segment.</div>
+        </div>
+        <div class="tam-card">
+          <div class="tam-label">SOM &mdash; Serviceable Obtainable Market</div>
+          <div class="tam-value">$20.5M</div>
+          <div class="tam-desc">5% capture of ~125,000 global extrusion-based bioprinting labs at $8,000 ARR per customer over 5 years.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       SOCIAL PROOF / VALIDATION
+  ================================================================ -->
+  <section id="social-proof">
+    <div class="container">
+      <div class="section-header centered animate-in">
+        <span class="section-label">Customer Validation</span>
+        <h2 class="text-display">The labs have spoken.</h2>
+        <p class="text-lead">After 50+ interviews with researchers, CSOs, and lab directors, the signal is unmistakable: failed prints are a costly, accepted part of the workflow — and no commercial solution exists.</p>
+      </div>
+
+      <div class="interview-banner animate-in">
+        <div class="interview-stat">
+          <div class="num">50+</div>
+          <div class="lbl">Potential customers interviewed</div>
+        </div>
+        <div class="interview-divider"></div>
+        <div class="interview-stat">
+          <div class="num">100%</div>
+          <div class="lbl">Found no commercial solution</div>
+        </div>
+        <div class="interview-divider"></div>
+        <div class="interview-stat">
+          <div class="num">Multiple</div>
+          <div class="lbl">Labs building internal tools from scratch</div>
+        </div>
+        <div class="interview-divider"></div>
+        <div class="interview-stat">
+          <div class="num">Universal</div>
+          <div class="lbl">Hardware troubleshooting as daily distraction</div>
+        </div>
+      </div>
+
+      <div class="quotes-grid">
+        <div class="quote-card animate-in delay-1">
+          <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="quote-text">We use a lot of tricks to try and get the bioprinter to simulate ideal conditions... we haven't found a concrete method to reduce print failure and have had to accept that.</p>
+          <div class="quote-author">
+            <div class="author-avatar">SB</div>
+            <div>
+              <div class="author-name">Susana Bohorquez</div>
+              <div class="author-title">BioE PhD Researcher</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-card animate-in delay-2">
+          <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="quote-text">Poor print fidelity can easily cause failure in patterning. This is one of the most frequent issues we have run into.</p>
+          <div class="quote-author">
+            <div class="author-avatar">AL</div>
+            <div>
+              <div class="author-name">Ariel Lin</div>
+              <div class="author-title">Theberge Lab</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-card animate-in delay-3">
+          <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="quote-text">We run into print failures all the time — it's a standard in the industry at this point.</p>
+          <div class="quote-author">
+            <div class="author-avatar">AF</div>
+            <div>
+              <div class="author-name">Arafat Fasuyi</div>
+              <div class="author-title">Stevens Lab, University of Washington</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-card animate-in delay-4">
+          <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="quote-text">We lose at least 45% of tissue prints... Having to accommodate for this resource-wise is time-intensive and slows down our research.</p>
+          <div class="quote-author">
+            <div class="author-avatar">HK</div>
+            <div>
+              <div class="author-name">Honesty Kim</div>
+              <div class="author-title">UCSF Gartner Lab Researcher</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-card animate-in delay-1">
+          <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="quote-text">Your product seems to address all the problems we have faced trying to integrate bioprinting as the industry standard. I would love to take a look once the technology is ready.</p>
+          <div class="quote-author">
+            <div class="author-avatar">CK</div>
+            <div>
+              <div class="author-name">Chitra Karuthapandian</div>
+              <div class="author-title">Previously Gilead Sciences</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="quote-card animate-in delay-2">
+          <span class="quote-mark" aria-hidden="true">&ldquo;</span>
+          <p class="quote-text">This seems like a great time to get into this business after hearing about your lack of competitors.</p>
+          <div class="quote-author">
+            <div class="author-avatar">KE</div>
+            <div>
+              <div class="author-name">Kris Engskov</div>
+              <div class="author-title">Co-founder, Rippl</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="animate-in">
+        <p class="advisors-label">Advisors &amp; Mentors</p>
+        <div class="advisors-grid">
+          <div class="advisor-card">
+            <div class="advisor-initial">MA</div>
+            <div class="advisor-name">Michael Allison</div>
+            <div class="advisor-affil">Senior Mechanical Engineer, Simplexity &mdash; 9 HP Patents (Printer Division Lead)</div>
+          </div>
+          <div class="advisor-card">
+            <div class="advisor-initial">JW</div>
+            <div class="advisor-name">Jay Walcott, Ph.D.</div>
+            <div class="advisor-affil">Bioprinting Researcher, Georgia Tech Bioengineering</div>
+          </div>
+          <div class="advisor-card">
+            <div class="advisor-initial">RM</div>
+            <div class="advisor-name">Ravi Mahalingam</div>
+            <div class="advisor-affil">Founder &amp; CEO, ReechPharma &mdash; 3 Pharma Companies Built</div>
+          </div>
+          <div class="advisor-card">
+            <div class="advisor-initial">MD</div>
+            <div class="advisor-name">Max Darnell, Ph.D.</div>
+            <div class="advisor-affil">Modulus Therapeutics / Harvard University &mdash; Cell &amp; Tissue Engineering</div>
+          </div>
+          <div class="advisor-card">
+            <div class="advisor-initial">AH</div>
+            <div class="advisor-name">Abraham Hengyucius</div>
+            <div class="advisor-affil">President, Bioengineering Without Borders @ UW</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       TEAM
+  ================================================================ -->
+  <section id="team">
+    <div class="container">
+      <div class="section-header centered animate-in">
+        <span class="section-label">Team</span>
+        <h2 class="text-display">Built by people who care.</h2>
+        <p class="text-lead">A multi-disciplinary team from the University of Washington combining mechanical engineering, computer science, and business to bring reliable bioprinting to every lab in the world.</p>
+      </div>
+
+      <div class="team-grid">
+        <div class="team-card animate-in delay-1">
+          <div class="team-avatar">VD</div>
+          <div class="team-name">Vitaliy Duvalko</div>
+          <div class="team-role">Mechanical Engineering &amp; Hardware</div>
+          <p class="team-bio">UW Advanced Robotics student who has fundraised and shipped medical supplies to Ukraine since 2022. Combines precision hardware expertise with a personal mission to expand access to medical technology.</p>
+          <div class="team-skills">CAD &middot; FEA &middot; PCB development &middot; Sensor integration &middot; C++ &middot; Python &middot; Firmware</div>
+        </div>
+
+        <div class="team-card animate-in delay-2">
+          <div class="team-avatar">DM</div>
+          <div class="team-name">Dharshini Maru</div>
+          <div class="team-role">Computer Science &amp; Bioinformatics</div>
+          <p class="team-bio">CS student bridging bioinformatics with hardware systems. Hands-on experience building bioprinters, tissue sampling and analysis, and hardware optimization for medtech applications.</p>
+          <div class="team-skills">Software design &middot; Biocompatible materials &middot; Cell viability optimization &middot; UV crosslinking &middot; Data manipulation</div>
+        </div>
+
+        <div class="team-card animate-in delay-3">
+          <div class="team-avatar">HH</div>
+          <div class="team-name">Humphrey Huang</div>
+          <div class="team-role">Software &amp; AI Integration</div>
+          <p class="team-bio">CS major at UW–Seattle who architects the software layer that brings Adam Biotech to life. Has built production data pipelines and AI workflows that ingest large datasets, perform RAG, and store results in structured databases.</p>
+          <div class="team-skills">Python &middot; Java &middot; JavaScript &middot; AI agents &middot; Data pipelines &middot; Hardware-software integration</div>
+        </div>
+
+        <div class="team-card animate-in delay-4">
+          <div class="team-avatar">AC</div>
+          <div class="team-name">Amanda Cai</div>
+          <div class="team-role">Computer Science &amp; Product</div>
+          <p class="team-bio">CS major at UW–Seattle focused on expanding the possibilities of drug discovery and regenerative medicine through 3D bioprinting. Placed 97th percentile internationally in DECA.</p>
+          <div class="team-skills">Python &middot; Java &middot; HTML/CSS &middot; Product development &middot; Startup competition experience</div>
+        </div>
+
+        <div class="team-card animate-in delay-5">
+          <div class="team-avatar">JS</div>
+          <div class="team-name">Jamison Schmidt</div>
+          <div class="team-role">Operations &amp; Business Development</div>
+          <p class="team-bio">Drives go-to-market strategy and operational execution at Adam Biotech. Focused on translating the team's technical work into commercial traction with biotech labs, CROs, and academic research institutions.</p>
+          <div class="team-skills">Business development &middot; Operations &middot; Sales &middot; Go-to-market strategy</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       PRICING
+  ================================================================ -->
+  <section id="pricing">
+    <div class="container">
+      <div class="section-header centered animate-in">
+        <span class="section-label">Pricing</span>
+        <h2 class="text-display">One prevented failure pays for a year.</h2>
+        <p class="text-lead">At $5,000 per failed print, stopping a single failure every quarter covers the entire first year's cost in under three months.</p>
+      </div>
+
+      <div class="pricing-grid">
+        <div class="pricing-card animate-in delay-1">
+          <div class="pricing-label">Hardware</div>
+          <div class="pricing-name">Sensor Module</div>
+          <div class="pricing-price">$1,000 <span class="period">one-time</span></div>
+          <p class="pricing-sub">Fixed module with microcontroller and circuitry. Per-printer, one-time purchase.</p>
+          <div class="pricing-features">
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Mounts on any extrusion-based bioprinter</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Temperature + pH + force + concentration sensors</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> 30-minute installation</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Connects to software platform via USB/Wi-Fi</div>
+          </div>
+        </div>
+
+        <div class="pricing-card featured animate-in delay-2">
+          <div class="pricing-badge">Most Popular</div>
+          <div class="pricing-label">Recurring</div>
+          <div class="pricing-name">Sensor Array</div>
+          <div class="pricing-price">$500 <span class="period">/ 6 months</span></div>
+          <p class="pricing-sub">Replacement sensor array for the toolhead. Electrochemical sensors degrade with use and are replaced every six months.</p>
+          <div class="pricing-features">
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Full electrochemical sensor array</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Drop-in replacement — no recalibration needed</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Pre-calibrated for common cell types</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Subscription available for automatic replacement</div>
+          </div>
+          <div class="pricing-roi">
+            <strong>ROI in under 3 months:</strong> At $5,000 per failed print and a bi-weekly failure rate, preventing just 2 prints per year fully pays back Year 1 cost &mdash; with $8,000 in savings to spare.
+          </div>
+        </div>
+
+        <div class="pricing-card animate-in delay-3">
+          <div class="pricing-label">Software</div>
+          <div class="pricing-name">Platform License</div>
+          <div class="pricing-price">$499 <span class="period">/ month</span></div>
+          <p class="pricing-sub">Per-lab subscription. Includes dashboard, alerts, ML failure prediction, and FDA documentation tools.</p>
+          <div class="pricing-features">
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Live monitoring dashboard</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Automatic failure detection &amp; alerts</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> ML failure prediction model</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> FDA-ready documentation export</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Unlimited printers per lab</div>
+            <div class="pricing-feature"><span class="pf-icon">✓</span> Print history &amp; audit trail</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-top:32px;padding:20px;" class="animate-in">
+        <p style="font-size:0.9rem;color:var(--text-secondary);">Average of 2 bioprinters per lab &rarr; <strong style="color:var(--text-primary);">$8,000 ARR per customer</strong> ($5,988 software + $2,000 sensor arrays). Hardware is non-recurring.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       BOOK A DEMO
+  ================================================================ -->
+  <section id="book-demo">
+    <div class="container">
+      <div class="demo-layout">
+        <div class="demo-left animate-in">
+          <span class="section-label">Get Early Access</span>
+          <h2 class="text-display">Ready to stop losing prints?</h2>
+          <p class="text-lead">We're offering a free 30-day pilot. Install on your existing printer, get a failure report you've never seen before. After 30 days of your own data, the decision makes itself.</p>
+
+          <div class="demo-trust-items">
+            <div class="demo-trust-item">
+              <div class="demo-trust-icon">🔧</div>
+              <div class="demo-trust-text">
+                <strong>30-minute installation</strong>
+                <span>No printer modifications. Works with your existing extrusion-based bioprinter.</span>
+              </div>
+            </div>
+            <div class="demo-trust-item">
+              <div class="demo-trust-icon">📊</div>
+              <div class="demo-trust-text">
+                <strong>Failure data on Day 1</strong>
+                <span>See exactly when and why your prints are failing — often for the first time ever.</span>
+              </div>
+            </div>
+            <div class="demo-trust-item">
+              <div class="demo-trust-icon">💰</div>
+              <div class="demo-trust-text">
+                <strong>ROI within 3 months</strong>
+                <span>A single prevented print failure at $5,000 covers the first year's total cost.</span>
+              </div>
+            </div>
+            <div class="demo-trust-item">
+              <div class="demo-trust-icon">📋</div>
+              <div class="demo-trust-text">
+                <strong>FDA documentation included</strong>
+                <span>Every print automatically generates regulatory-ready documentation for your submissions.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-right animate-in delay-2">
+          <div class="demo-form">
+            <div id="formContainer">
+              <h3 style="margin-bottom:6px;font-size:1.15rem;">Book a Demo</h3>
+              <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:24px;">We'll reach out within 48 hours to schedule a time.</p>
+
+              <form id="demoForm" novalidate>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Jane" autocomplete="given-name">
+                    <p class="form-error" id="firstNameError">Please enter your first name.</p>
+                  </div>
+                  <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Smith" autocomplete="family-name">
+                    <p class="form-error" id="lastNameError">Please enter your last name.</p>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="email">Work Email</label>
+                  <input type="email" id="email" name="email" class="form-control" placeholder="jane@university.edu" autocomplete="email">
+                  <p class="form-error" id="emailError">Please enter a valid email address.</p>
+                </div>
+
+                <div class="form-group">
+                  <label for="company">Institution / Company</label>
+                  <input type="text" id="company" name="company" class="form-control" placeholder="University of Washington" autocomplete="organization">
+                  <p class="form-error" id="companyError">Please enter your institution or company.</p>
+                </div>
+
+                <div class="form-group">
+                  <label for="role">Your Role</label>
+                  <select id="role" name="role" class="form-control">
+                    <option value="">Select your role&hellip;</option>
+                    <option value="cso">Chief Scientific Officer (CSO)</option>
+                    <option value="lab-director">Lab Director / PI</option>
+                    <option value="researcher">Researcher / Postdoc</option>
+                    <option value="phd-student">PhD Student</option>
+                    <option value="industry">Industry Scientist</option>
+                    <option value="other">Other</option>
+                  </select>
+                  <p class="form-error" id="roleError">Please select your role.</p>
+                </div>
+
+                <div class="form-group">
+                  <label for="printerType">Current Bioprinter</label>
+                  <select id="printerType" name="printerType" class="form-control">
+                    <option value="">Select your current setup&hellip;</option>
+                    <option value="cellink">Cellink BioX / BioX+</option>
+                    <option value="allevi">Allevi Series</option>
+                    <option value="envision">EnvisionTEC 3D-Bioplotter</option>
+                    <option value="regenhu">RegenHU Series</option>
+                    <option value="other-commercial">Other Commercial Bioprinter</option>
+                    <option value="custom">Custom / DIY Bioprinter</option>
+                    <option value="evaluating">No Bioprinter (Evaluating Options)</option>
+                  </select>
+                  <p class="form-error" id="printerTypeError">Please select your current setup.</p>
+                </div>
+
+                <div class="form-group">
+                  <label for="message">Anything else? (Optional)</label>
+                  <textarea id="message" name="message" class="form-control" rows="3" placeholder="Tell us about your current print failure challenges..."></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg form-submit">
+                  Request Demo &rarr;
+                </button>
+                <p class="form-disclaimer">No commitment required. We respond within 48 hours.</p>
+              </form>
+            </div>
+
+            <div class="form-success" id="formSuccess" role="alert">
+              <div class="success-icon">&#10003;</div>
+              <h3>We'll be in touch soon.</h3>
+              <p>We've received your demo request and will reach out within 48 hours to schedule a time. In the meantime, feel free to email us directly at <strong>team@adambiotech.com</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider"></div>
+
+  <!-- ================================================================
+       FOOTER
+  ================================================================ -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <a href="#hero" class="nav-logo" style="font-size:1.3rem;">ADAM<span class="bio">BIO</span></a>
+          <p>Building the quality control layer for the next generation of drug discovery. Stop losing prints. Start saving lives.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#solution">The Attachment</a></li>
+            <li><a href="#how-it-works">How It Works</a></li>
+            <li><a href="#competitive">Why Adam Biotech</a></li>
+            <li><a href="#pricing">Pricing</a></li>
+            <li><a href="#book-demo">Book a Demo</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Company</h4>
+          <ul>
+            <li><a href="#team">Team</a></li>
+            <li><a href="#social-proof">Advisors</a></li>
+            <li><a href="#market">Market</a></li>
+            <li><a href="#book-demo">Contact</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Adam Biotech, Inc. All rights reserved.</p>
+        <div class="uw-badge">
+          <span>University of Washington &mdash;</span>
+          <strong>Dempsey Startup Competition 2026</strong>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ================================================================
+       JAVASCRIPT
+  ================================================================ -->
+  <script>
+    // ---- Scroll animations ----
+    const scrollObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          scrollObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.animate-in').forEach(el => scrollObserver.observe(el));
+
+    // ---- Counter animation ----
+    function animateCounter(el, target, duration = 1800) {
+      const start = performance.now();
+      const update = (time) => {
+        const progress = Math.min((time - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.floor(eased * target).toLocaleString();
+        if (progress < 1) requestAnimationFrame(update);
+        else el.textContent = target.toLocaleString();
+      };
+      requestAnimationFrame(update);
+    }
+
+    let countersStarted = false;
+    const marketSection = document.getElementById('market');
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && !countersStarted) {
+          countersStarted = true;
+          document.querySelectorAll('.counter[data-target]').forEach(counter => {
+            animateCounter(counter, parseInt(counter.getAttribute('data-target'), 10));
+          });
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    if (marketSection) counterObserver.observe(marketSection);
+
+    // ---- Donut chart animation ----
+    const donutObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          document.getElementById('donutFill').classList.add('animate');
+          donutObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.4 });
+    const donutEl = document.querySelector('.donut-wrapper');
+    if (donutEl) donutObserver.observe(donutEl);
+
+    // ---- Mobile nav ----
+    const hamburger  = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const overlay    = document.getElementById('overlay');
+
+    function closeMobileMenu() {
+      hamburger.classList.remove('open');
+      mobileMenu.classList.remove('open');
+      overlay.classList.remove('visible');
+      hamburger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    }
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = mobileMenu.classList.contains('open');
+      if (isOpen) {
+        closeMobileMenu();
+      } else {
+        hamburger.classList.add('open');
+        mobileMenu.classList.add('open');
+        overlay.classList.add('visible');
+        hamburger.setAttribute('aria-expanded', 'true');
+        document.body.style.overflow = 'hidden';
+      }
+    });
+    overlay.addEventListener('click', closeMobileMenu);
+    document.querySelectorAll('.mnl').forEach(link => link.addEventListener('click', closeMobileMenu));
+
+    // ---- Nav scroll tint ----
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 24);
+    }, { passive: true });
+
+    // ---- Floating particles ----
+    const heroSection = document.getElementById('hero');
+    const particleColors = ['rgba(0,122,255,0.5)', 'rgba(10,132,255,0.4)', 'rgba(0,86,179,0.45)'];
+    for (let i = 0; i < 18; i++) {
+      const p = document.createElement('span');
+      p.classList.add('particle');
+      const size = Math.random() * 3 + 2;
+      p.style.cssText = [
+        `width:${size}px`, `height:${size}px`,
+        `left:${Math.random() * 100}%`, `bottom:0`,
+        `background:${particleColors[Math.floor(Math.random() * particleColors.length)]}`,
+        `animation-duration:${Math.random() * 25 + 15}s`,
+        `animation-delay:${Math.random() * 16}s`
+      ].join(';');
+      heroSection.appendChild(p);
+    }
+
+    // ---- Form validation ----
+    const demoForm      = document.getElementById('demoForm');
+    const formContainer = document.getElementById('formContainer');
+    const formSuccess   = document.getElementById('formSuccess');
+
+    function setFieldError(fieldId, errorId, hasError) {
+      document.getElementById(fieldId).classList.toggle('error', hasError);
+      document.getElementById(errorId).classList.toggle('visible', hasError);
+    }
+
+    function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+
+    demoForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const firstName   = document.getElementById('firstName').value.trim();
+      const lastName    = document.getElementById('lastName').value.trim();
+      const email       = document.getElementById('email').value.trim();
+      const company     = document.getElementById('company').value.trim();
+      const role        = document.getElementById('role').value;
+      const printerType = document.getElementById('printerType').value;
+
+      const e1 = !firstName;
+      const e2 = !lastName;
+      const e3 = !isValidEmail(email);
+      const e4 = !company;
+      const e5 = !role;
+      const e6 = !printerType;
+
+      setFieldError('firstName',   'firstNameError',   e1);
+      setFieldError('lastName',    'lastNameError',    e2);
+      setFieldError('email',       'emailError',       e3);
+      setFieldError('company',     'companyError',     e4);
+      setFieldError('role',        'roleError',        e5);
+      setFieldError('printerType', 'printerTypeError', e6);
+
+      if (!e1 && !e2 && !e3 && !e4 && !e5 && !e6) {
+        formContainer.style.display = 'none';
+        formSuccess.classList.add('visible');
+      }
+    });
+
+    ['firstName','lastName','email','company','role','printerType'].forEach(id => {
+      const el = document.getElementById(id);
+      const errorEl = document.getElementById(id + 'Error');
+      el.addEventListener('input', () => {
+        el.classList.remove('error');
+        if (errorEl) errorEl.classList.remove('visible');
+      });
+      el.addEventListener('change', () => {
+        el.classList.remove('error');
+        if (errorEl) errorEl.classList.remove('visible');
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# Credentials — never commit
+.env
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode/
+.idea/

@@ -643,13 +643,19 @@
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7' viewBox='0 0 12 7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%2394a3b8' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 14px center; padding-right: 40px; cursor: pointer;
     }
-    .form-submit { width: 100%; margin-top: 8px; justify-content: center; font-size: 1rem; padding: 15px; }
+    .form-submit { width: 100%; margin-top: 8px; justify-content: center; font-size: 1rem; padding: 15px; position: relative; }
+    .form-submit:disabled { opacity: 0.7; cursor: not-allowed; transform: none !important; }
     .form-disclaimer { font-size: 0.76rem; color: var(--text-muted); text-align: center; margin-top: 12px; }
     .form-success { display: none; text-align: center; padding: 52px 20px; }
     .form-success.visible { display: block; }
     .success-icon { width: 72px; height: 72px; border-radius: 50%; background: rgba(34,197,94,0.12); border: 2px solid rgba(34,197,94,0.35); display: flex; align-items: center; justify-content: center; margin: 0 auto 22px; font-size: 2rem; }
     .form-success h3 { margin-bottom: 12px; }
     .form-success p { color: var(--text-secondary); font-size: 0.92rem; line-height: 1.65; }
+    .form-server-error { background: rgba(239,68,68,0.07); border: 1px solid rgba(239,68,68,0.25); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 0.84rem; color: var(--color-danger); margin-bottom: 16px; display: none; }
+    .form-server-error.visible { display: block; }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff; border-radius: 50%; animation: spin 0.7s linear infinite; margin-right: 6px; vertical-align: -3px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .form-section-heading { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin: 22px 0 14px; padding-bottom: 8px; border-bottom: 1px solid var(--border-subtle); }
 
     /* ================================================================
        FOOTER
@@ -1493,80 +1499,160 @@
         <div class="demo-right animate-in delay-2">
           <div class="demo-form">
             <div id="formContainer">
-              <h3 style="margin-bottom:6px;font-size:1.15rem;">Book a Demo</h3>
-              <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:24px;">We'll reach out within 48 hours to schedule a time.</p>
+              <h3 style="margin-bottom:6px;font-size:1.15rem;">Get in Touch</h3>
+              <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:20px;">Tell us about your lab and we'll reach out within 48 hours.</p>
+
+              <div class="form-server-error" id="serverError"></div>
 
               <form id="demoForm" novalidate>
+
+                <p class="form-section-heading">Contact Information</p>
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="firstName">First Name</label>
+                    <label for="firstName">First Name *</label>
                     <input type="text" id="firstName" name="firstName" class="form-control" placeholder="Jane" autocomplete="given-name">
                     <p class="form-error" id="firstNameError">Please enter your first name.</p>
                   </div>
                   <div class="form-group">
-                    <label for="lastName">Last Name</label>
+                    <label for="lastName">Last Name *</label>
                     <input type="text" id="lastName" name="lastName" class="form-control" placeholder="Smith" autocomplete="family-name">
                     <p class="form-error" id="lastNameError">Please enter your last name.</p>
                   </div>
                 </div>
-
-                <div class="form-group">
-                  <label for="email">Work Email</label>
-                  <input type="email" id="email" name="email" class="form-control" placeholder="jane@university.edu" autocomplete="email">
-                  <p class="form-error" id="emailError">Please enter a valid email address.</p>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="email">Work Email *</label>
+                    <input type="email" id="email" name="email" class="form-control" placeholder="jane@university.edu" autocomplete="email">
+                    <p class="form-error" id="emailError">Please enter a valid email address.</p>
+                  </div>
+                  <div class="form-group">
+                    <label for="phone">Phone <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+                    <input type="tel" id="phone" name="phone" class="form-control" placeholder="+1 (206) 555-0100" autocomplete="tel">
+                  </div>
                 </div>
 
+                <p class="form-section-heading">Your Organization</p>
                 <div class="form-group">
-                  <label for="company">Institution / Company</label>
+                  <label for="company">Institution / Company *</label>
                   <input type="text" id="company" name="company" class="form-control" placeholder="University of Washington" autocomplete="organization">
                   <p class="form-error" id="companyError">Please enter your institution or company.</p>
                 </div>
-
-                <div class="form-group">
-                  <label for="role">Your Role</label>
-                  <select id="role" name="role" class="form-control">
-                    <option value="">Select your role&hellip;</option>
-                    <option value="cso">Chief Scientific Officer (CSO)</option>
-                    <option value="lab-director">Lab Director / PI</option>
-                    <option value="researcher">Researcher / Postdoc</option>
-                    <option value="phd-student">PhD Student</option>
-                    <option value="industry">Industry Scientist</option>
-                    <option value="other">Other</option>
-                  </select>
-                  <p class="form-error" id="roleError">Please select your role.</p>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="orgType">Organization Type *</label>
+                    <select id="orgType" name="orgType" class="form-control">
+                      <option value="">Select type&hellip;</option>
+                      <option value="Academic Lab">Academic Research Lab</option>
+                      <option value="Biotech Startup">Biotech Startup</option>
+                      <option value="CRO">Contract Research Org (CRO)</option>
+                      <option value="Pharma">Pharmaceutical Company</option>
+                      <option value="Hospital / Medical Center">Hospital / Medical Center</option>
+                      <option value="Government / National Lab">Government / National Lab</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <p class="form-error" id="orgTypeError">Please select your organization type.</p>
+                  </div>
+                  <div class="form-group">
+                    <label for="role">Your Role *</label>
+                    <select id="role" name="role" class="form-control">
+                      <option value="">Select role&hellip;</option>
+                      <option value="CSO / VP of Science">CSO / VP of Science</option>
+                      <option value="Lab Director / PI">Lab Director / PI</option>
+                      <option value="Senior Researcher / Postdoc">Senior Researcher / Postdoc</option>
+                      <option value="PhD Student">PhD Student</option>
+                      <option value="Lab Manager">Lab Manager</option>
+                      <option value="Industry Scientist">Industry Scientist</option>
+                      <option value="Procurement / Operations">Procurement / Operations</option>
+                      <option value="Other">Other</option>
+                    </select>
+                    <p class="form-error" id="roleError">Please select your role.</p>
+                  </div>
                 </div>
 
+                <p class="form-section-heading">Your Bioprinting Setup</p>
                 <div class="form-group">
-                  <label for="printerType">Current Bioprinter</label>
+                  <label for="printerType">Current Bioprinter *</label>
                   <select id="printerType" name="printerType" class="form-control">
-                    <option value="">Select your current setup&hellip;</option>
-                    <option value="cellink">Cellink BioX / BioX+</option>
-                    <option value="allevi">Allevi Series</option>
-                    <option value="envision">EnvisionTEC 3D-Bioplotter</option>
-                    <option value="regenhu">RegenHU Series</option>
-                    <option value="other-commercial">Other Commercial Bioprinter</option>
-                    <option value="custom">Custom / DIY Bioprinter</option>
-                    <option value="evaluating">No Bioprinter (Evaluating Options)</option>
+                    <option value="">Select your setup&hellip;</option>
+                    <option value="Cellink BioX / BioX+">Cellink BioX / BioX+</option>
+                    <option value="Allevi Series">Allevi Series</option>
+                    <option value="EnvisionTEC 3D-Bioplotter">EnvisionTEC 3D-Bioplotter</option>
+                    <option value="RegenHU Series">RegenHU Series</option>
+                    <option value="3D Systems ProJet">3D Systems ProJet</option>
+                    <option value="Other Commercial Bioprinter">Other Commercial Bioprinter</option>
+                    <option value="Custom / DIY Bioprinter">Custom / DIY Bioprinter</option>
+                    <option value="Multiple Printers">Multiple Printers (mixed fleet)</option>
+                    <option value="No Bioprinter — Evaluating">No Bioprinter — Evaluating Options</option>
                   </select>
                   <p class="form-error" id="printerTypeError">Please select your current setup.</p>
                 </div>
-
-                <div class="form-group">
-                  <label for="message">Anything else? (Optional)</label>
-                  <textarea id="message" name="message" class="form-control" rows="3" placeholder="Tell us about your current print failure challenges..."></textarea>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="numPrinters">Number of Bioprinters</label>
+                    <select id="numPrinters" name="numPrinters" class="form-control">
+                      <option value="">Select&hellip;</option>
+                      <option value="1">1</option>
+                      <option value="2–3">2–3</option>
+                      <option value="4–6">4–6</option>
+                      <option value="7+">7 or more</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="printsPerMonth">Prints per Month</label>
+                    <select id="printsPerMonth" name="printsPerMonth" class="form-control">
+                      <option value="">Select&hellip;</option>
+                      <option value="1–5">1–5</option>
+                      <option value="6–20">6–20</option>
+                      <option value="21–50">21–50</option>
+                      <option value="51+">51 or more</option>
+                    </select>
+                  </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary btn-lg form-submit">
-                  Request Demo &rarr;
+                <p class="form-section-heading">Your Research</p>
+                <div class="form-group">
+                  <label for="researchFocus">Research Focus / Cell Types <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+                  <input type="text" id="researchFocus" name="researchFocus" class="form-control" placeholder="e.g. cardiac tissue, vascular constructs, hydrogel scaffolds">
+                </div>
+                <div class="form-group">
+                  <label for="mainChallenge">Biggest Bioprinting Challenge *</label>
+                  <textarea id="mainChallenge" name="mainChallenge" class="form-control" rows="3" placeholder="Describe the print failures, reproducibility issues, or workflow pain points you're dealing with..."></textarea>
+                  <p class="form-error" id="mainChallengeError">Please describe your main challenge.</p>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="source">How did you hear about us?</label>
+                    <select id="source" name="source" class="form-control">
+                      <option value="">Select&hellip;</option>
+                      <option value="Colleague / Word of mouth">Colleague / Word of mouth</option>
+                      <option value="Conference / Event">Conference / Event</option>
+                      <option value="LinkedIn">LinkedIn</option>
+                      <option value="Google Search">Google Search</option>
+                      <option value="Academic Paper / Publication">Academic Paper / Publication</option>
+                      <option value="UW / University Network">UW / University Network</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group" style="display:flex;flex-direction:column;">
+                    <label>&nbsp;</label>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="message">Anything else you'd like us to know? <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label>
+                  <textarea id="message" name="message" class="form-control" rows="2" placeholder="Timeline, specific questions, partnership ideas..."></textarea>
+                </div>
+
+                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg form-submit">
+                  Send Message &rarr;
                 </button>
-                <p class="form-disclaimer">No commitment required. We respond within 48 hours.</p>
+                <p class="form-disclaimer">No commitment required &mdash; we respond within 48 hours.</p>
               </form>
             </div>
 
             <div class="form-success" id="formSuccess" role="alert">
               <div class="success-icon">&#10003;</div>
-              <h3>We'll be in touch soon.</h3>
-              <p>We've received your demo request and will reach out within 48 hours to schedule a time. In the meantime, feel free to email us directly at <strong>team@adambiotech.com</strong>.</p>
+              <h3>Message received.</h3>
+              <p>Thanks for reaching out. We've sent a confirmation to your email and one of our team members will follow up within 48 hours.<br><br>Questions in the meantime? Email us at <strong>team@adambiotech.com</strong>.</p>
             </div>
           </div>
         </div>
@@ -1722,58 +1808,113 @@
       heroSection.appendChild(p);
     }
 
-    // ---- Form validation ----
+    // ---- Form submission ----
     const demoForm      = document.getElementById('demoForm');
     const formContainer = document.getElementById('formContainer');
     const formSuccess   = document.getElementById('formSuccess');
+    const submitBtn     = document.getElementById('submitBtn');
+    const serverError   = document.getElementById('serverError');
 
     function setFieldError(fieldId, errorId, hasError) {
       document.getElementById(fieldId).classList.toggle('error', hasError);
-      document.getElementById(errorId).classList.toggle('visible', hasError);
+      const errEl = document.getElementById(errorId);
+      if (errEl) errEl.classList.toggle('visible', hasError);
     }
 
     function isValidEmail(v) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
 
-    demoForm.addEventListener('submit', (e) => {
+    function setLoading(loading) {
+      submitBtn.disabled = loading;
+      submitBtn.innerHTML = loading
+        ? '<span class="spinner"></span> Sending&hellip;'
+        : 'Send Message &rarr;';
+    }
+
+    demoForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const firstName   = document.getElementById('firstName').value.trim();
-      const lastName    = document.getElementById('lastName').value.trim();
-      const email       = document.getElementById('email').value.trim();
-      const company     = document.getElementById('company').value.trim();
-      const role        = document.getElementById('role').value;
-      const printerType = document.getElementById('printerType').value;
+      serverError.classList.remove('visible');
 
-      const e1 = !firstName;
-      const e2 = !lastName;
-      const e3 = !isValidEmail(email);
-      const e4 = !company;
-      const e5 = !role;
-      const e6 = !printerType;
+      const firstName     = document.getElementById('firstName').value.trim();
+      const lastName      = document.getElementById('lastName').value.trim();
+      const email         = document.getElementById('email').value.trim();
+      const phone         = document.getElementById('phone').value.trim();
+      const company       = document.getElementById('company').value.trim();
+      const orgType       = document.getElementById('orgType').value;
+      const role          = document.getElementById('role').value;
+      const printerType   = document.getElementById('printerType').value;
+      const numPrinters   = document.getElementById('numPrinters').value;
+      const printsPerMonth = document.getElementById('printsPerMonth').value;
+      const researchFocus = document.getElementById('researchFocus').value.trim();
+      const mainChallenge = document.getElementById('mainChallenge').value.trim();
+      const source        = document.getElementById('source').value;
+      const message       = document.getElementById('message').value.trim();
 
-      setFieldError('firstName',   'firstNameError',   e1);
-      setFieldError('lastName',    'lastNameError',    e2);
-      setFieldError('email',       'emailError',       e3);
-      setFieldError('company',     'companyError',     e4);
-      setFieldError('role',        'roleError',        e5);
-      setFieldError('printerType', 'printerTypeError', e6);
+      const errs = {
+        firstName:     !firstName,
+        lastName:      !lastName,
+        email:         !isValidEmail(email),
+        company:       !company,
+        orgType:       !orgType,
+        role:          !role,
+        printerType:   !printerType,
+        mainChallenge: !mainChallenge,
+      };
 
-      if (!e1 && !e2 && !e3 && !e4 && !e5 && !e6) {
+      Object.entries(errs).forEach(([id, hasErr]) =>
+        setFieldError(id, id + 'Error', hasErr)
+      );
+
+      if (Object.values(errs).some(Boolean)) {
+        // Scroll to first error
+        const firstErr = demoForm.querySelector('.form-control.error');
+        if (firstErr) firstErr.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      setLoading(true);
+
+      try {
+        const res = await fetch('/api/submit', {
+          method:  'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            firstName, lastName, email, phone,
+            company, orgType, role,
+            printerType, numPrinters, printsPerMonth,
+            researchFocus, mainChallenge, source, message
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          serverError.textContent = data.error || 'Something went wrong. Please try again.';
+          serverError.classList.add('visible');
+          setLoading(false);
+          return;
+        }
+
         formContainer.style.display = 'none';
         formSuccess.classList.add('visible');
+
+      } catch (err) {
+        serverError.textContent = 'Network error. Please check your connection and try again.';
+        serverError.classList.add('visible');
+        setLoading(false);
       }
     });
 
-    ['firstName','lastName','email','company','role','printerType'].forEach(id => {
+    // Clear errors on input
+    ['firstName','lastName','email','company','orgType','role','printerType','mainChallenge'].forEach(id => {
       const el = document.getElementById(id);
-      const errorEl = document.getElementById(id + 'Error');
-      el.addEventListener('input', () => {
+      if (!el) return;
+      const clear = () => {
         el.classList.remove('error');
-        if (errorEl) errorEl.classList.remove('visible');
-      });
-      el.addEventListener('change', () => {
-        el.classList.remove('error');
-        if (errorEl) errorEl.classList.remove('visible');
-      });
+        const errEl = document.getElementById(id + 'Error');
+        if (errEl) errEl.classList.remove('visible');
+      };
+      el.addEventListener('input', clear);
+      el.addEventListener('change', clear);
     });
   </script>
 </body>
